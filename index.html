@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Automation Testing Master Program – eMexo Technologies</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --ink:#0a0a0a;--ink-muted:#5a5a5a;--ink-faint:#aaa;
+  --surface:#f4f2ed;--white:#fff;
+  --accent:#ff4422;
+  --border:#dedad2;--tag-bg:#eeebe4;
+}
+html{scroll-behavior:smooth;}
+body{font-family:"DM Sans",sans-serif;background:var(--surface);color:var(--ink);overflow-x:hidden;}
+
+/* CURSOR */
+.cursor{position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:difference;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .08s,top .08s,width .25s,height .25s;mix-blend-mode:difference;}
+
+/* PROGRESS */
+#pbar{position:fixed;top:0;left:0;height:3px;background:var(--accent);z-index:9999;width:0;transition:width .1s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 5%;transition:background .4s,backdrop-filter .4s;}
+nav.scrolled{background:rgba(10,10,10,.93);backdrop-filter:blur(18px);}
+.nav-logo img{height:34px;object-fit:contain;background:#fff;padding:4px 10px;border-radius:6px;}
+.nav-links{display:flex;gap:1.8rem;align-items:center;}
+.nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:.8rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;}
+.nav-links a:hover{color:#fff;}
+.nav-cta{background:var(--accent)!important;color:#fff!important;padding:9px 22px;border-radius:3px;}
+@media(max-width:700px){.nav-links{display:none;}}
+
+/* HERO */
+.hero{min-height:100vh;background:#0a0a0a;display:flex;flex-direction:column;justify-content:center;padding:120px 5% 80px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;right:-2%;top:50%;transform:translateY(-50%);font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(100px,18vw,260px);color:rgba(255,255,255,.025);pointer-events:none;user-select:none;}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;position:relative;z-index:2;}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:6px 16px;border-radius:100px;margin-bottom:1.8rem;}
+.dot{width:7px;height:7px;background:#22ff88;border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(1.5);}}
+.badge span{font-size:.73rem;color:rgba(255,255,255,.6);letter-spacing:.08em;text-transform:uppercase;font-weight:500;}
+.hero h1{font-family:"Syne",sans-serif;font-size:clamp(2.6rem,6vw,5rem);font-weight:800;line-height:1.04;letter-spacing:-.035em;color:#fff;margin-bottom:1.4rem;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero-desc{font-size:1.05rem;color:rgba(255,255,255,.52);max-width:500px;margin-bottom:2.5rem;font-weight:300;line-height:1.75;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3rem;}
+.btn-red{background:var(--accent);color:#fff;padding:15px 32px;border-radius:3px;font-weight:600;font-size:.93rem;text-decoration:none;display:inline-block;transition:transform .25s,box-shadow .25s;box-shadow:0 4px 20px rgba(255,68,34,.4);}
+.btn-red:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(255,68,34,.55);}
+.btn-ghost{border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);padding:14px 26px;border-radius:3px;font-size:.93rem;text-decoration:none;display:inline-block;transition:all .2s;}
+.btn-ghost:hover{border-color:#fff;color:#fff;}
+.hero-stats{display:flex;gap:2.5rem;flex-wrap:wrap;padding-top:2rem;border-top:1px solid rgba(255,255,255,.08);}
+.stat .num{font-family:"Syne",sans-serif;font-size:1.9rem;font-weight:800;color:#fff;}
+.stat .num span{color:var(--accent);}
+.stat p{font-size:.7rem;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.08em;}
+.hero-img-wrap{perspective:1200px;}
+.hero-img-card{border-radius:16px;overflow:hidden;transform-style:preserve-3d;transition:transform .12s ease-out;box-shadow:0 30px 80px rgba(0,0,0,.65);position:relative;}
+.hero-img-card img{width:100%;display:block;object-fit:cover;max-height:490px;}
+.hero-img-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,68,34,.12),transparent 55%);}
+.hero-img-info{position:absolute;bottom:18px;left:18px;background:rgba(10,10,10,.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);padding:10px 16px;border-radius:10px;}
+.hero-img-info p{font-size:.72rem;color:rgba(255,255,255,.5);}
+.hero-img-info strong{font-family:"Syne",sans-serif;font-size:.88rem;color:#fff;}
+
+/* PARTICLES */
+.particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.part{position:absolute;width:2px;height:2px;background:rgba(255,255,255,.22);border-radius:50%;animation:float linear infinite;}
+@keyframes float{0%{opacity:0;transform:translateY(100vh) scale(0);}10%{opacity:1;}90%{opacity:.4;}100%{opacity:0;transform:translateY(-20px) translateX(var(--dx)) scale(1.4);}}
+
+/* REVEAL */
+.rv{opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;}
+.rv.on{opacity:1;transform:translateY(0);}
+.rvl{opacity:0;transform:translateX(-50px);transition:opacity .7s,transform .7s;}
+.rvl.on{opacity:1;transform:translateX(0);}
+.rvr{opacity:0;transform:translateX(50px);transition:opacity .7s,transform .7s;}
+.rvr.on{opacity:1;transform:translateX(0);}
+.rvs{opacity:0;transform:scale(.88);transition:opacity .6s,transform .6s;}
+.rvs.on{opacity:1;transform:scale(1);}
+.d1{transition-delay:.1s!important;}.d2{transition-delay:.2s!important;}.d3{transition-delay:.3s!important;}
+.d4{transition-delay:.4s!important;}.d5{transition-delay:.5s!important;}.d6{transition-delay:.6s!important;}
+
+/* SECTIONS */
+section{padding:90px 5%;}
+.sl{font-size:.71rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;}
+.st{font-family:"Syne",sans-serif;font-size:clamp(1.9rem,3.5vw,2.9rem);font-weight:800;letter-spacing:-.03em;line-height:1.12;margin-bottom:1rem;}
+.ss{font-size:1rem;color:var(--ink-muted);max-width:500px;line-height:1.72;font-weight:300;}
+
+/* SHOWCASE */
+.showcase{background:#fff;}
+.sc-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;margin-top:3rem;}
+@media(max-width:900px){.sc-grid{grid-template-columns:1fr;gap:2.5rem;}}
+.sc-img{border-radius:16px;overflow:hidden;position:relative;}
+.sc-img img{width:100%;display:block;object-fit:cover;transition:transform .6s;}
+.sc-img:hover img{transform:scale(1.04);}
+.sc-img::after{content:"";position:absolute;inset:0;border-radius:16px;border:1px solid rgba(0,0,0,.06);}
+.feats{display:flex;flex-direction:column;gap:1.2rem;}
+.fi{display:flex;gap:1rem;align-items:flex-start;padding:1.1rem 1.1rem;border-radius:12px;border:1px solid transparent;transition:border-color .3s,background .3s,transform .3s;}
+.fi:hover{border-color:var(--border);background:#faf9f6;transform:translateX(7px);}
+.fi-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.fi h4{font-family:"Syne",sans-serif;font-size:.93rem;font-weight:700;margin-bottom:.3rem;}
+.fi p{font-size:.83rem;color:var(--ink-muted);line-height:1.6;}
+
+/* MODULES */
+.modules{background:var(--surface);}
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(285px,1fr));gap:1.5px;margin-top:3rem;border:1.5px solid var(--border);}
+.mc{background:#fff;padding:2rem 1.75rem;transition:background .25s,transform .25s;cursor:default;position:relative;overflow:hidden;}
+.mc::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.mc:hover{background:#fef9f7;transform:translateY(-4px);}.mc:hover::before{transform:scaleX(1);}
+.mn{font-family:"Syne",sans-serif;font-size:.69rem;font-weight:700;color:var(--ink-faint);letter-spacing:.1em;margin-bottom:.75rem;}
+.mi{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:1.25rem;}
+.mc h3{font-family:"Syne",sans-serif;font-size:.98rem;font-weight:700;margin-bottom:.5rem;color:var(--ink);}
+.mc p{font-size:.84rem;color:var(--ink-muted);line-height:1.65;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:.85rem;}
+.tag{font-size:.69rem;font-weight:500;background:var(--tag-bg);color:var(--ink-muted);padding:3px 9px;border-radius:2px;}
+
+/* TRACK */
+.track{background:var(--ink);}
+.track .st{color:#fff;}.track .ss{color:rgba(255,255,255,.42);}
+.tg{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:1px;margin-top:3rem;background:rgba(255,255,255,.07);}
+.tc{background:var(--ink);padding:2rem 1.5rem;transition:background .25s;}
+.tc:hover{background:#131313;}
+.tn{font-family:"Syne",sans-serif;font-size:2.8rem;font-weight:800;color:rgba(255,255,255,.06);line-height:1;margin-bottom:.6rem;}
+.tc h4{font-family:"Syne",sans-serif;font-size:.9rem;font-weight:700;color:#fff;margin-bottom:.35rem;}
+.tc p{font-size:.79rem;color:rgba(255,255,255,.38);line-height:1.6;}
+
+/* GALLERY */
+.gallery{background:var(--surface);}
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem;}
+@media(max-width:700px){.gg{grid-template-columns:1fr;}}
+.gc{border-radius:14px;overflow:hidden;position:relative;background:#000;box-shadow:0 8px 30px rgba(0,0,0,.12);transform-style:preserve-3d;transition:transform .45s cubic-bezier(.23,1,.32,1),box-shadow .45s;}
+.gc img{width:100%;height:260px;object-fit:cover;display:block;transition:transform .5s,filter .5s;}
+.gc:hover img{transform:scale(1.07);filter:brightness(.82);}
+.go{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.78) 0%,transparent 55%);opacity:0;transition:opacity .35s;}
+.gc:hover .go{opacity:1;}
+.gcap{position:absolute;bottom:0;left:0;right:0;padding:1.1rem 1.2rem;transform:translateY(8px);opacity:0;transition:all .35s;}
+.gc:hover .gcap{transform:translateY(0);opacity:1;}
+.gcap h4{font-family:"Syne",sans-serif;font-size:.88rem;font-weight:700;color:#fff;}
+.gcap p{font-size:.76rem;color:rgba(255,255,255,.62);margin-top:3px;}
+
+/* FAQ */
+.faq{background:#fff;}
+.fq{display:grid;grid-template-columns:1fr 1fr;gap:1px;border:1px solid var(--border);margin-top:3rem;}
+@media(max-width:700px){.fq{grid-template-columns:1fr;}}
+.fi2{padding:2rem 1.75rem;background:#fff;transition:background .2s;}
+.fi2:hover{background:var(--surface);}
+.fq2{font-family:"Syne",sans-serif;font-size:.93rem;font-weight:700;color:var(--ink);margin-bottom:.55rem;line-height:1.4;}
+.fa{font-size:.84rem;color:var(--ink-muted);line-height:1.7;font-weight:300;}
+
+/* CTA */
+.cta{background:var(--accent);color:#fff;padding:90px 5%;text-align:center;position:relative;overflow:hidden;}
+.cta::before{content:"GO";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:"Syne",sans-serif;font-weight:800;font-size:clamp(110px,24vw,310px);color:rgba(255,255,255,.06);pointer-events:none;}
+.cta .st{color:#fff;position:relative;z-index:2;}
+.cta p{font-size:1.04rem;color:rgba(255,255,255,.72);max-width:450px;margin:0 auto 2.5rem;font-weight:300;line-height:1.72;position:relative;z-index:2;}
+.btn-wh{background:#fff;color:var(--accent);padding:16px 38px;border-radius:3px;font-weight:700;font-size:.93rem;text-decoration:none;display:inline-block;transition:transform .25s,box-shadow .25s;position:relative;z-index:2;box-shadow:0 6px 24px rgba(0,0,0,.15);}
+.btn-wh:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(0,0,0,.22);}
+.ci{display:flex;justify-content:center;gap:3rem;flex-wrap:wrap;margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,.2);position:relative;z-index:2;}
+.cd .cl{font-size:.69rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.48);margin-bottom:.3rem;}
+.cd .cv{font-family:"Syne",sans-serif;font-size:.93rem;font-weight:700;color:#fff;}
+.cd a{color:#fff;text-decoration:none;}
+
+/* FOOTER */
+footer{background:#070707;color:rgba(255,255,255,.32);text-align:center;padding:1.5rem 5%;font-size:.76rem;}
+footer a{color:rgba(255,255,255,.44);text-decoration:none;}footer a:hover{color:#fff;}
+
+/* RIPPLE */
+@keyframes rip{to{transform:scale(80);opacity:0;}}
+</style>
+</head>
+<body>
+<div id="pbar"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cring"></div>
+
+<nav id="nav">
+  <div class="nav-logo">
+    <img src="https://www.emexotechnologies.com/wp-content/uploads/2020/02/emexo-logo.png" alt="eMexo Technologies">
+  </div>
+  <div class="nav-links">
+    <a href="#showcase">About</a>
+    <a href="#modules">Curriculum</a>
+    <a href="#track">Career Path</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://www.emexotechnologies.com/courses/software-testing-masters-program-certification-training-course/" class="nav-cta" target="_blank">Enroll Now</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="particles" id="ptcls"></div>
+  <div class="hero-bg">SDET</div>
+  <div class="hero-grid">
+    <div>
+      <div class="badge rv d1"><span class="dot"></span><span>Enrollments Open · Electronic City Phase 1</span></div>
+      <h1 class="rv d2">Automation<br>Testing <em>Master</em><br>Program</h1>
+      <p class="hero-desc rv d3">From manual tester to enterprise SDET — architect scalable, production-grade frameworks with real lab access and placement support.</p>
+      <div class="hero-btns rv d4">
+        <a href="https://www.emexotechnologies.com/courses/software-testing-masters-program-certification-training-course/" class="btn-red" target="_blank">Enroll Now →</a>
+        <a href="tel:+919513216462" class="btn-ghost">📞 +91 95132 16462</a>
+      </div>
+      <div class="hero-stats rv d5">
+        <div class="stat"><div class="num">6<span>+</span></div><p>Frameworks</p></div>
+        <div class="stat"><div class="num">100<span>%</span></div><p>Hands-On</p></div>
+        <div class="stat"><div class="num">Lab</div><p>Real Lab Access</p></div>
+        <div class="stat"><div class="num">CI<span>/CD</span></div><p>DevOps Pipeline</p></div>
+      </div>
+    </div>
+    <div class="hero-img-wrap rvr d3">
+      <div class="hero-img-card" id="tcard">
+        <img src="https://raw.githubusercontent.com/emexo2026/automation-testing-master-program-electronic-city/refs/heads/main/ChatGPT%20Image%20May%2025%2C%202026%2C%2003_28_54%20PM.png" alt="SDET Program">
+        <div class="hero-img-overlay"></div>
+        <div class="hero-img-info"><p>eMexo Technologies</p><strong>SDET Certified Program</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="showcase" id="showcase">
+  <div class="sl rv">Why eMexo</div>
+  <h2 class="st rv d1">Built for Real-World<br>Engineering Roles</h2>
+  <div class="sc-grid">
+    <div class="sc-img rvl d2">
+      <img src="https://raw.githubusercontent.com/emexo2026/automation-testing-master-program-electronic-city/refs/heads/main/best-automation-testing-training-electronic-city.png" alt="Best Automation Testing Training Electronic City">
+    </div>
+    <div class="feats">
+      <div class="fi rv d2"><div class="fi-icon" style="background:#fff0eb;">🏛️</div><div><h4>Dedicated Lab Infrastructure</h4><p>Pre-configured CI runner servers, mobile emulation grids, and cloud execution nodes simulating real enterprise environments.</p></div></div>
+      <div class="fi rv d3"><div class="fi-icon" style="background:#ebf0ff;">🎯</div><div><h4>Shift-Left Quality Philosophy</h4><p>Learn to embed quality validation at every pipeline stage, not just at the end of delivery.</p></div></div>
+      <div class="fi rv d4"><div class="fi-icon" style="background:#ebf5eb;">🚀</div><div><h4>Placement Support & Mentorship</h4><p>GitHub portfolio builds, mock interviews, algorithm challenges, and direct recruiter connects.</p></div></div>
+      <div class="fi rv d5"><div class="fi-icon" style="background:#f0ebff;">📅</div><div><h4>Weekend Batches Available</h4><p>Full curriculum on weekends — designed for working professionals without disrupting daily schedules.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="modules" id="modules">
+  <div class="sl rv">Curriculum</div>
+  <h2 class="st rv d1">6-Module Enterprise<br>Framework Architecture</h2>
+  <p class="ss rv d2">Modular, object-oriented, data-driven — built the way real automation teams operate.</p>
+  <div class="mg">
+    <div class="mc rv d1"><div class="mn">01</div><div class="mi" style="background:#fff0eb;">☕</div><h3>Java + Selenium WebDriver</h3><p>Master Page Object Model, Factory and Singleton patterns, and custom element wrappers to eliminate test flakiness at scale.</p><div class="tags"><span class="tag">Java</span><span class="tag">Selenium</span><span class="tag">POM</span><span class="tag">TestNG</span></div></div>
+    <div class="mc rv d2"><div class="mn">02</div><div class="mi" style="background:#ebf0ff;">🎭</div><h3>Cypress & Playwright</h3><p>Browser-native debugging protocols, network interception, and isolated execution contexts for modern JS front-ends.</p><div class="tags"><span class="tag">Cypress</span><span class="tag">Playwright</span><span class="tag">TypeScript</span></div></div>
+    <div class="mc rv d3"><div class="mn">03</div><div class="mi" style="background:#ebf5eb;">📱</div><h3>Appium Mobile Automation</h3><p>Drive native, hybrid, and mobile-web apps across iOS and Android from a single unified codebase.</p><div class="tags"><span class="tag">Appium</span><span class="tag">Android</span><span class="tag">iOS</span></div></div>
+    <div class="mc rv d4"><div class="mn">04</div><div class="mi" style="background:#f0ebff;">🥒</div><h3>BDD with Cucumber</h3><p>Transform complex code into Gherkin-based functional specs that bridge product analysts and automation engineers.</p><div class="tags"><span class="tag">Cucumber</span><span class="tag">BDD</span><span class="tag">Gherkin</span></div></div>
+    <div class="mc rv d5"><div class="mn">05</div><div class="mi" style="background:#ffebeb;">🐍</div><h3>Python Automation Testing</h3><p>High-performance runtime for microservices, ML data validation, and CI pipelines with minimal boilerplate.</p><div class="tags"><span class="tag">Python</span><span class="tag">Pytest</span><span class="tag">Selenium</span></div></div>
+    <div class="mc rv d6"><div class="mn">06</div><div class="mi" style="background:#ebf9f5;">🔗</div><h3>API & CI/CD Automation</h3><p>Validate back-end microservices and embed test suites into Jenkins, GitHub Actions, and Docker pipelines.</p><div class="tags"><span class="tag">RestAssured</span><span class="tag">Jenkins</span><span class="tag">Docker</span></div></div>
+  </div>
+</section>
+
+<section class="track" id="track">
+  <div class="sl rv" style="color:rgba(255,255,255,.32);">Career Path</div>
+  <h2 class="st rv d1">Your SDET Journey</h2>
+  <p class="ss rv d2">A structured path from validation basics to enterprise framework architect.</p>
+  <div class="tg">
+    <div class="tc rv d1"><div class="tn">01</div><h4>Core Foundations</h4><p>Java/Python basics, OOP, Git, and testing fundamentals.</p></div>
+    <div class="tc rv d2"><div class="tn">02</div><h4>Framework Design</h4><p>Build modular, data-driven suites using Selenium, Cypress, and Appium.</p></div>
+    <div class="tc rv d3"><div class="tn">03</div><h4>API & Backend</h4><p>Validate REST microservices with RestAssured before browser testing.</p></div>
+    <div class="tc rv d4"><div class="tn">04</div><h4>DevOps Integration</h4><p>Plug into CI/CD pipelines with Jenkins, Docker, and cloud grids.</p></div>
+    <div class="tc rv d5"><div class="tn">05</div><h4>Live Projects</h4><p>Real-world assignments on lab hardware with full reporting.</p></div>
+    <div class="tc rv d6"><div class="tn">06</div><h4>Placement Support</h4><p>Resume reviews, mock interviews, GitHub portfolio, and recruiter connects.</p></div>
+  </div>
+</section>
+
+<section class="gallery" id="gallery">
+  <div class="sl rv">Program Highlights</div>
+  <h2 class="st rv d1">See What You Will<br>Build and Learn</h2>
+  <div class="gg">
+    <div class="gc rvs d1">
+      <img src="https://raw.githubusercontent.com/emexo2026/automation-testing-master-program-electronic-city/refs/heads/main/ChatGPT%20Image%20May%2025%2C%202026%2C%2003_28_54%20PM.png" alt="SDET Program">
+      <div class="go"></div>
+      <div class="gcap"><h4>SDET Master Program</h4><p>Enterprise-grade automation training</p></div>
+    </div>
+    <div class="gc rvs d2">
+      <img src="https://raw.githubusercontent.com/emexo2026/automation-testing-master-program-electronic-city/refs/heads/main/best-automation-testing-training-electronic-city.png" alt="Best Training Electronic City">
+      <div class="go"></div>
+      <div class="gcap"><h4>Best-In-Class Training</h4><p>Electronic City top automation institute</p></div>
+    </div>
+    <div class="gc rvs d3">
+      <img src="https://raw.githubusercontent.com/emexo2026/automation-testing-master-program-electronic-city/refs/heads/main/api-ui-automation-testing-framework.png" alt="API UI Automation Framework">
+      <div class="go"></div>
+      <div class="gcap"><h4>API + UI Framework</h4><p>Full-stack automation from backend to UI</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="sl rv">FAQ</div>
+  <h2 class="st rv d1">Everything You<br>Need to Know</h2>
+  <div class="fq">
+    <div class="fi2 rv d1"><div class="fq2">What lab infrastructure is included?</div><p class="fa">All students get access to a dedicated lab with pre-configured CI runner servers, mobile emulation grids, and cloud execution nodes simulating real enterprise traffic.</p></div>
+    <div class="fi2 rv d2"><div class="fq2">Can I join while working full-time?</div><p class="fa">Yes. Weekend batches run Saturdays and Sundays with the full curriculum, lab access, and mentorship — no overlap with your work schedule.</p></div>
+    <div class="fi2 rv d3"><div class="fq2">How deep is the API testing module?</div><p class="fa">Extensive. You will master RestAssured for raw back-end microservice validation before layering in browser-level UI tests — true end-to-end coverage.</p></div>
+    <div class="fi2 rv d4"><div class="fq2">What placement support exists for freshers?</div><p class="fa">Freshers go through a targeted pipeline: logic reviews, algorithmic challenges, GitHub portfolio builds, and direct recruiter scheduling.</p></div>
+    <div class="fi2 rv d5"><div class="fq2">Where is the training centre located?</div><p class="fa">Electronic City Phase 1, Bangalore — inside the primary corporate tech park hub, near the flyover for easy commute.</p></div>
+    <div class="fi2 rv d6"><div class="fq2">Is there a budget-friendly option?</div><p class="fa">Yes. An affordable track delivers the same rigorous syllabus optimized for candidates entering the industry without heavy financial overhead.</p></div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <h2 class="st rv">Ready to Build<br>the Real Thing?</h2>
+  <p class="rv d1">Join the master program and transition from repetitive testing to scalable code framework engineering.</p>
+  <a href="https://www.emexotechnologies.com/courses/software-testing-masters-program-certification-training-course/" class="btn-wh rv d2" target="_blank">Start Your Enrollment →</a>
+  <div class="ci rv d3">
+    <div class="cd"><div class="cl">Location</div><div class="cv">Electronic City Phase 1, Bangalore</div></div>
+    <div class="cd"><div class="cl">Phone</div><div class="cv"><a href="tel:+919513216462">+91 95132 16462</a></div></div>
+    <div class="cd"><div class="cl">Website</div><div class="cv"><a href="https://www.emexotechnologies.com" target="_blank">emexotechnologies.com</a></div></div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 eMexo Technologies · Electronic City Phase 1, Bangalore &nbsp;|&nbsp; <a href="https://www.emexotechnologies.com" target="_blank">emexotechnologies.com</a> &nbsp;|&nbsp; <a href="tel:+919513216462">+91 95132 16462</a></p>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener("scroll",()=>{
+  document.getElementById("pbar").style.width=Math.min((window.scrollY/(document.body.scrollHeight-window.innerHeight))*100,100)+"%";
+});
+
+// Nav scroll
+window.addEventListener("scroll",()=>{
+  document.getElementById("nav").classList.toggle("scrolled",window.scrollY>40);
+});
+
+// Custom cursor
+const cur=document.getElementById("cursor"),ring=document.getElementById("cring");
+document.addEventListener("mousemove",e=>{
+  cur.style.left=e.clientX+"px";cur.style.top=e.clientY+"px";
+  setTimeout(()=>{ring.style.left=e.clientX+"px";ring.style.top=e.clientY+"px";},55);
+});
+document.querySelectorAll("a,button,.mc,.gc").forEach(el=>{
+  el.addEventListener("mouseenter",()=>{cur.style.width="18px";cur.style.height="18px";ring.style.width="56px";ring.style.height="56px";});
+  el.addEventListener("mouseleave",()=>{cur.style.width="10px";cur.style.height="10px";ring.style.width="36px";ring.style.height="36px";});
+});
+
+// Scroll reveal
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add("on");obs.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll(".rv,.rvl,.rvr,.rvs").forEach(el=>obs.observe(el));
+
+// 3D tilt hero card
+const tc=document.getElementById("tcard");
+if(tc){
+  tc.parentElement.addEventListener("mousemove",e=>{
+    const r=tc.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*22;
+    const y=-((e.clientY-r.top)/r.height-.5)*16;
+    tc.style.transform="rotateY("+x+"deg) rotateX("+y+"deg) scale(1.02)";
+  });
+  tc.parentElement.addEventListener("mouseleave",()=>{tc.style.transform="rotateY(0) rotateX(0) scale(1)";});
+}
+
+// 3D gallery tilt
+document.querySelectorAll(".gc").forEach(card=>{
+  card.addEventListener("mousemove",e=>{
+    const r=card.getBoundingClientRect();
+    const x=((e.clientX-r.left)/r.width-.5)*18;
+    const y=-((e.clientY-r.top)/r.height-.5)*14;
+    card.style.transform="translateY(-10px) rotateX("+y+"deg) rotateY("+x+"deg)";
+  });
+  card.addEventListener("mouseleave",()=>{card.style.transform="translateY(0) rotateX(0) rotateY(0)";});
+});
+
+// Module ripple click
+document.querySelectorAll(".mc").forEach(card=>{
+  card.addEventListener("click",e=>{
+    const s=document.createElement("span");
+    const r=card.getBoundingClientRect();
+    s.style.cssText="position:absolute;width:4px;height:4px;background:rgba(255,68,34,.35);border-radius:50%;left:"+(e.clientX-r.left)+"px;top:"+(e.clientY-r.top)+"px;transform:scale(0);animation:rip .6s linear forwards;pointer-events:none;";
+    card.appendChild(s);setTimeout(()=>s.remove(),700);
+  });
+});
+
+// Particles
+const pc=document.getElementById("ptcls");
+for(let i=0;i<28;i++){
+  const p=document.createElement("div");p.className="part";
+  p.style.cssText="left:"+Math.random()*100+"%;bottom:0;animation-duration:"+(8+Math.random()*14)+"s;animation-delay:"+(Math.random()*12)+"s;--dx:"+((Math.random()-.5)*200)+"px;";
+  pc.appendChild(p);
+}
+</script>
+</body>
+</html>
